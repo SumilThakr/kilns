@@ -1,0 +1,152 @@
+# InMAPData is the path to location of baseline meteorology and pollutant data.
+# The path can include environment variables.
+InMAPData = "inmapdata_BGL.ncf"
+
+# VariableGridData is the path to the location of the variable-resolution gridded
+# InMAP data, or the location where it should be created if it doesn't already
+# exist. The path can include environment variables.
+VariableGridData = "bgl_grid.gob"
+
+EmissionsShapefiles = [
+    "ID_0.shp",
+]
+
+# EmissionUnits gives the units that the input emissions are in.
+# Acceptable values are 'tons/year' and 'kg/year'.
+EmissionUnits = "kg/year"
+
+#static = true
+
+# OutputFile specifies the path to the desired output shapefile location. It can
+# include environment variables.
+OutputFile = "0.shp"
+
+# LogFile specifies the path to the desired logfile location. It can include
+# environment variables. If LogFile is left blank, the logfile will be saved in
+# the same location as the OutputFile.
+#LogFile = "nei2005/logfile_${InMAPRunType}.log"
+
+#[aep]
+#GridRef = ["gridref.txt"]
+#SrgSpec = "srgspec_smoke.csv"
+#SrgSpecType = "SMOKE"
+#SrgShapefileDirectory = "pop"
+
+#[aep.InventoryConfig]
+#COARDSYear = 2016
+InputUnits = "kg"
+
+[aep.InventoryConfig.COARDSFiles]
+#00agr00000 = "emissions/ceds_agr.nc"
+#ene = "emissions/ceds_ene.nc"
+#00ind00000 = "emissions/ceds_ind.nc"
+#00rco00000 = "emissions/ceds_rco.nc"
+#shp = "emissions/ceds_shp.nc"
+#00slv00000 = "emissions/ceds_slv.nc"
+#00tra00000 = "emissions/ceds_tra.nc"
+#00wst00000 = "emissions/ceds_wst.nc"
+#biovoc = "emissions/biovoc.nc"
+#bioburn = "emissions/bioburn.nc"
+#dust = "emissions/dust.nc"
+#soilnox = "emissions/soilnox.nc"
+
+[aep.SpatialConfig]
+SpatialCache = "spatialsrgs_004x003"
+MaxCacheEntries = 20000
+
+# OutputVariables specifies which model variables should be included in the
+# output file. Each output variable is defined by the desired name and an
+# expression that can be used to calculate it
+# (in the form VariableName = "Expression"). These expressions can utilize
+# variables built into the model, user-defined variables, and functions.
+# Available functions include:
+# 'exp(x)' which applies the exponetional function e^x.
+# 'log(x)' which applies the natural logarithm function log(e).
+# 'log10(x)' which applies the base-10 logarithm function log10(e).
+# Note: Environment variables can be used in both variable names and expressions.
+[OutputVariables]
+TotalPM25 = "PrimaryPM25 + pNH4 + pSO4 + pNO3 + SOA"
+TotalPopD = "(exp(log(1.078)/10 * TotalPM25) - 1) * TotalPop * AllCause / 100000"
+TotalPop = "TotalPop"
+AllCause = "AllCause"
+PrimPM = "PrimaryPM25"
+PSO4 = "pSO4"
+PNO3 = "pNO3"
+PNH4 = "pNH4"
+SOA = "SOA"
+
+# VarGrid provides information for specifying the variable resolution grid.
+[VarGrid]
+
+# VariableGridXo and VariableGridYo are the X and Y coordinates of the
+# lower-left corner of the InMAP grid.
+VariableGridXo= 85.0
+VariableGridYo= 22.0
+
+# VariableGridDx and VariableGridDy are the X and Y edge lengths of grid
+# cells in the outermost nest, in meters.
+VariableGridDx= 5.0
+VariableGridDy= 4.0
+
+# Xnests and Ynests specify nesting multiples in the X and Y directions.
+# For instance, if Xnests and Ynests are both [100, 2, 2, 2] and
+# VariableGridDy and VariableGridDx are both 40000, the outermost
+# nest would have 100 grid cells in each direction with 40 km resolution,
+# and there would be three levels of inner nesting, each at double the
+# resolution of the previous nest, with the innermost nest having a grid
+# cell length of 5 km.
+Xnests= [2,2,2,2,2,2,2,2]
+Ynests= [1,2,2,2,2,2,2,2]
+
+# HiResLayers is the number of layers, starting at ground level, to do
+# nesting in. Layers above this will have all grid cells in the lowest
+# spatial resolution.
+HiResLayers= 8
+
+# GridProj gives projection info for the CTM grid in Proj4 or WKT format.
+GridProj= "+proj=longlat +units=degrees"
+
+# PopDensityThreshold is a limit for people per unit area in a grid cell
+# (units will typically be either people / m^2 or people / degree^2,
+# depending on the spatial projection of the model grid). If
+# the population density in a grid cell is above this level, the cell in question
+# is a candidate for splitting into smaller cells.
+PopDensityThreshold= 55000000.0
+
+# PopThreshold is a limit for the total number of people in a grid cell.
+# If the total population in a grid cell is above this level, the cell in question
+# is a candidate for splitting into smaller cells.
+PopThreshold= 100000.0
+
+# PopConcThreshold is the limit for
+# Σ(|ΔConcentration|)*combinedVolume*|ΔPopulation| / {Σ(|totalMass|)*totalPopulation}.
+# See the documentation for PopConcMutator for more information.
+PopConcThreshold= 0.000000001
+
+# CensusFile is the path to the shapefile holding population information.
+#CensusFile= "/home/hill0408/sthakrar/sthakrar/evaldata_v1.3/April17/FINAL_ALL_SECTIONS.shp"
+# CensusFile= "TEST_worldpop_2020-nonan.ncf"
+# CensusFile= "regrid/output.shp"
+CensusFile= "BGL_worldpop_2020.ncf"
+
+# CensusPopColumns is a list of the data fields in CensusFile that should
+# be included as population estimates in the model. They can be population
+# of different demographics or for different population scenarios.
+CensusPopColumns= ["TotalPop"]
+
+# PopGridColumn is the name of the field in CensusFile that contains the data
+# that should be compared to PopThreshold and PopDensityThreshold when determining
+# if a grid cell should be split. It should typically be one of the fields
+# in CensusPopColumns.
+PopGridColumn= "TotalPop"
+
+# MortalityRateFile is the path to the shapefile containing baseline
+# mortality rate data.
+#MortalityRateFile= "/home/hill0408/sthakrar/sthakrar/evaldata_v1.3/January19/CorrectMortalityData.shp"
+
+# MortalityRateColumns maps the names of each input population group to the name
+# of the field in MortalityRateFile that contains its respective baseline
+# mortality rate, in units of deaths per year per 100,000 people. Only mortality
+# rates used in output variable expressions need to be included here.
+[VarGrid.MortalityRateColumns]
+AllCause = "TotalPop"

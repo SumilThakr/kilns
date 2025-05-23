@@ -1,0 +1,5 @@
+Shapefile,Simple_Average,Population_Weighted_Average
+../inputs/PNO3_native.shp,0.07959979051312094,0.08867924169152099
+../inputs/PrimPM_native.shp,0.3272994218412067,0.333866340143025
+../inputs/PSO4_native.shp,0.08360554787074823,0.08854866220527641
+../inputs/SOA_native.shp,7.379946830411536e-05,7.212559060856846e-05
