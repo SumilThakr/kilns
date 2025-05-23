@@ -1,12 +1,13 @@
-23rd May 2025
-emissions:
-Emission factor compilation data
-Gridded emissions data outputs
+emissions/
 
-geoschem:
-configuration for running GEOS-Chem
+- Emission factor compilation data
+- gridded emissions data outputs
 
-inmap:
-InMAP grid for Bangladesh
-InMAP results
-Code for generating maps
+geoschem/
+
+- configuration for running GEOS-Chem
+
+inmap/
+- InMAP grid for Bangladesh
+- InMAP results
+- code for generating maps
